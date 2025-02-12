@@ -1,14 +1,16 @@
 import User from "../models/User"
 import { decryptPassword, encryptPassword } from "../helpers/security"
+import { favourite } from "./favourite"
 
 export const savePassword=async(req,res)=>{
     try {
-        const {username,name,password}=req.body
-        const user=await User.findOne({username})
+        const {id}=req.params
+        const {name,password}=req.body
+        const user=await User.findById(id)
         
         if(!user)res.status(500).json({message:"user not found"});
 
-        const {encryptedPasword,iv}=encryptPassword(user.password.toString(),password)
+        const {encryptedPasword,iv}=encryptPassword(password)
 
         user.savedPasswords.push({
             name,
@@ -26,18 +28,22 @@ export const savePassword=async(req,res)=>{
 
 export const getPasswords=async(req,res)=>{
     try {
-        const {username,name}=req.body
-        const user=await User.findOne({username})
-        
-        if(!user)res.status(400).json({message:"user not found"});
+        const { id } = req.params;
+        const user = await User.findById(id);
+        if (!user) return res.status(400).json({ message: "User not found" });
+        if (!user.savedPasswords || user.savedPasswords.length === 0) {
+            return res.status(400).json({ message: "No passwords found" });
+        }
 
-        const savedPassword=user.savedPasswords.find(p=>p.name===name)
+        const decryptedPasswords = user.savedPasswords.map((pass) => ({
+            id:pass._id.toString(),
+            name: pass.name,
+            password: decryptPassword(pass.password, pass.iv),
+            created: pass.created,
+            favourite:user.favourites.includes(pass._id.toString())
+        }));
 
-        if(!savedPassword)res.status(400).json({message:"no passwords found with this name"});
-
-        const decryptedPassword=decryptPassword(user.password.toString(),savedPassword.password,savedPassword.iv)
-
-        res.status(201).json({decryptedPassword})
+        res.status(200).json({ savedPasswords: decryptedPasswords });
 
     } catch (error) {
         res.status(500).json({error:error.message})

@@ -30,8 +30,8 @@ export const register=async(req,res)=>{
                 pin
             })
         }
-        const savedUser=await newUser.save()
-        res.status(201).json(savedUser)
+        await newUser.save()
+        res.status(201).json({message:"User saved successfully"})
 
     } catch (error) {
         res.status(500).json({error:error.message})
@@ -50,7 +50,7 @@ export const login=async(req,res)=>{
 
         const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
         delete user.password
-        res.status(200).json({token,user})
+        res.status(200).json({token})
     } catch (error) {
         res.status(500).json({error:error.message})
     }
@@ -58,8 +58,9 @@ export const login=async(req,res)=>{
 
 export const createPin=async(req,res)=>{
     try {
-        const{username,email,pin}=req.body
-        const user=await User.findByIdAndUpdate({$or:[{username},{email}]},{pin},{new:true})
+        const {id}=req.params
+        const{pin}=req.body
+        await User.findByIdAndUpdate(id,{pin},{new:true})
         res.status(200).json({message:"Pin created"})
     } catch (error) {
         res.status(500).json({error:error.message})
@@ -68,8 +69,8 @@ export const createPin=async(req,res)=>{
 
 export const checkPin=async(req,res)=>{
     try {
-        const{username,email,pin}=req.body
-        const user=await User.findOne({$or:[{username},{email}]})
+        const {id}=req.params
+        const user=await User.findById(id)
         if(user.pin.toString()==="")res.status(200).json({message:false});
         else res.status(200).json({message:true})
     } catch (error) {

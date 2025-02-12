@@ -1,11 +1,9 @@
 import crypto from "crypto"
+import dotenv from "dotenv"
 
-function deriveKeyFromPassword(password) {
-    return crypto.pbkdf2Sync(password, "unique_salt", 100000, 32, "sha256");
-}
-
-export function encryptPassword(userPassword,password){
-    const key=deriveKeyFromPassword(userPassword)
+dotenv.config()
+export function encryptPassword(password){
+    const key=process.env.SECRET_KEY
     const iv=crypto.randomBytes(16)
     const cipher=crypto.createCipheriv("aes-256-cbc",key,iv)
 
@@ -15,8 +13,8 @@ export function encryptPassword(userPassword,password){
     return {encryptPassword: encrypted, iv:iv.toString("hex")}
 }
 
-export function decryptPassword(userPassword,encryptedPassword,iv){
-    const key=deriveKeyFromPassword(userPassword)
+export function decryptPassword(encryptedPassword,iv){
+    const key=process.env.SECRET_KEY
     const decipher=crypto.createDecipheriv("aes-256-cbc",key,Buffer.from(iv,"hex"))
 
     let decrypted=decipher.update(encryptedPassword,"hex","utf-8")
