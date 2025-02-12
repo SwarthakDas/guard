@@ -55,3 +55,24 @@ export const login=async(req,res)=>{
         res.status(500).json({error:error.message})
     }
 }
+
+export const createPin=async(req,res)=>{
+    try {
+        const{username,email,pin}=req.body
+        const user=await User.findByIdAndUpdate({$or:[{username},{email}]},{pin},{new:true})
+        res.status(200).json({message:"Pin created"})
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+}
+
+export const checkPin=async(req,res)=>{
+    try {
+        const{username,email,pin}=req.body
+        const user=await User.findOne({$or:[{username},{email}]})
+        if(user.pin.toString()==="")res.status(200).json({message:false});
+        else res.status(200).json({message:true})
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+}

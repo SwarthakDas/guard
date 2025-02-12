@@ -1,19 +1,5 @@
 import mongoose from "mongoose";
 
-const PasswordSchema=new mongoose.Schema({
-    name:{
-        type: String,
-    },
-    password:{
-        type: String,
-        required: true,
-    },
-    created:{
-        type:Date,
-        default:Date.now
-    }
-})
-
 const UserSchema=new mongoose.Schema({
     username:{
         type:String,
@@ -34,16 +20,24 @@ const UserSchema=new mongoose.Schema({
         min:6,
         max:6
     },
-    savedPasswords:{
-        type:[PasswordSchema],
-        default: []
-    },
-    securedPasswords:{
-        type:[PasswordSchema],
-        default: []
-    },
+    savedPasswords:[
+        {
+            name:String,
+            password:String,
+            iv:String,
+            created:Date.now
+        }
+    ],
+    securedPasswords:[
+        {
+            name:String,
+            password:String,
+            iv:String,
+            created:Date.now
+        }
+    ],
     favourites:{
-        type:[ObjectId],
+        type:[String],
         default:[]
     }
 },{timestamps:true})
