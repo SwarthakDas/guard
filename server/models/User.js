@@ -24,16 +24,7 @@ const UserSchema=new mongoose.Schema({
         {
             name:String,
             password:String,
-            iv:String,
-            created:Date.now
-        }
-    ],
-    securedPasswords:[
-        {
-            name:String,
-            password:String,
-            iv:String,
-            created:Date.now
+            created:{type:Date,default:Date.now}
         }
     ],
     favourites:{

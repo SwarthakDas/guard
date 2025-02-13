@@ -8,7 +8,6 @@ import mongoose from "mongoose"
 import {register} from "./controllers/auth.js"
 import authRoutes from "./routes/auth.js"
 import passwordRoutes from "./routes/password.js"
-import securedRoutes from "./routes/secured.js"
 import favouriteRoutes from "./routes/favourite.js"
 
 dotenv.config()
@@ -25,7 +24,6 @@ app.post("/auth/register",register)
 
 app.use("/auth",authRoutes)
 app.use("/password",passwordRoutes)
-app.use("/secured",securedRoutes)
 app.use("/favourite",favouriteRoutes)
 
 const PORT=process.env.PORT || 6001

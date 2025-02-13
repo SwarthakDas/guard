@@ -1,21 +1,24 @@
-import User from "../models/User"
-import { decryptPassword, encryptPassword } from "../helpers/security"
-import { favourite } from "./favourite"
+import User from "../models/User.js"
+import { decryptPassword, encryptPassword } from "../helpers/security.js"
+import { decryptPasswordName, encryptPasswordName } from "../helpers/nameSecurity.js"
+import dotenv from "dotenv"
+
+dotenv.config()
 
 export const savePassword=async(req,res)=>{
     try {
         const {id}=req.params
-        const {name,password}=req.body
+        const {name,password,pin}=req.body
         const user=await User.findById(id)
         
         if(!user)res.status(500).json({message:"user not found"});
 
-        const {encryptedPasword,iv}=encryptPassword(password)
+        const { encryptedPasword }=encryptPassword(pin,password);
+        const { encryptedName } = encryptPasswordName(pin,name);
 
         user.savedPasswords.push({
-            name,
+            name:encryptedName,
             password:encryptedPasword,
-            iv
         })
 
         await user.save()
@@ -29,6 +32,7 @@ export const savePassword=async(req,res)=>{
 export const getPasswords=async(req,res)=>{
     try {
         const { id } = req.params;
+        const {pin}=req.body
         const user = await User.findById(id);
         if (!user) return res.status(400).json({ message: "User not found" });
         if (!user.savedPasswords || user.savedPasswords.length === 0) {
@@ -37,8 +41,8 @@ export const getPasswords=async(req,res)=>{
 
         const decryptedPasswords = user.savedPasswords.map((pass) => ({
             id:pass._id.toString(),
-            name: pass.name,
-            password: decryptPassword(pass.password, pass.iv),
+            name: decryptPasswordName(pin,pass.name),
+            password: decryptPassword(pin,pass.password),
             created: pass.created,
             favourite:user.favourites.includes(pass._id.toString())
         }));

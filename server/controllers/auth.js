@@ -43,14 +43,14 @@ export const login=async(req,res)=>{
         const {username,email,password}=req.body
         
         const user=await User.findOne({$or:[{username},{email}]})
-        if(!user)return res.status(400).json({msg:"User doesnot exist"});
+        if(!user)return res.status(400).json({message:"User doesnot exist"});
 
         const matchPassword=await bcrypt.compare(password,user.password)
-        if(!matchPassword)return res.status(400).json({msg:"Incorrect Password"});
+        if(!matchPassword)return res.status(400).json({message:"Incorrect Password"});
 
         const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
         delete user.password
-        res.status(200).json({token})
+        res.status(200).json({token,user})
     } catch (error) {
         res.status(500).json({error:error.message})
     }
@@ -60,20 +60,29 @@ export const createPin=async(req,res)=>{
     try {
         const {id}=req.params
         const{pin}=req.body
-        await User.findByIdAndUpdate(id,{pin},{new:true})
+        const salt=await bcrypt.genSalt()
+        const hashedPin=await bcrypt.hash(pin,salt)
+        await User.findByIdAndUpdate(id,{pin:hashedPin},{new:true})
         res.status(200).json({message:"Pin created"})
     } catch (error) {
         res.status(500).json({error:error.message})
     }
 }
 
-export const checkPin=async(req,res)=>{
+export const verifyPin=async(req,res)=>{
     try {
         const {id}=req.params
+        const{pin}=req.body
+
         const user=await User.findById(id)
-        if(user.pin.toString()==="")res.status(200).json({message:false});
-        else res.status(200).json({message:true})
+        if(!user)return res.status(400).json({message:"User doesnot exist"});
+
+        const matchPin=await bcrypt.compare(pin,user.pin)
+        
+        if(!matchPin)return res.status(400).json({message:false});
+        else res.status(200).json({message:true});
     } catch (error) {
         res.status(500).json({error:error.message})
     }
 }
+
