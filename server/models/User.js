@@ -17,6 +17,7 @@ const UserSchema=new mongoose.Schema({
     },
     pin:{
         type:Number,
+        required:true,
         min:6,
         max:6
     },

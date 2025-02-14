@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import Navbar from "../Navbar"
 import { Check, ChevronDown, Key, LogIn, Shield, ShieldCheck, Shuffle, Star, User } from 'lucide-react'
 
 const HomePage = () => {
@@ -48,7 +47,7 @@ const HomePage = () => {
 
   const showCopiedNotification = () => {
     setShowCopied(true);
-    setTimeout(() => setShowCopied(false), 2000); // Hide after 2 seconds
+    setTimeout(() => setShowCopied(false), 2000);
   };
   
 
@@ -56,7 +55,7 @@ const HomePage = () => {
 
   return (
     <div className="flex justify-center gap-64">
-      {isMobile?(<div className="absolute top-2/5 -left-2" style={{ zIndex: menuZIndex }}>
+      {isMobile?(<div className="absolute top-1/3 -left-2" style={{ zIndex: menuZIndex }}>
           <div className="mx-auto max-w-md " >
             <nav className="relative " onClick={() =>{ setIsExpanded(true);setTimeout(() => setMenuZIndex(50), 50)}} onMouseLeave={() => { setIsExpanded(false);setTimeout(() => setMenuZIndex(0), 300);}}  >
               <div
@@ -181,7 +180,12 @@ const HomePage = () => {
 
 
       <div className="flex flex-col items-center ">
-        <Navbar/>
+        <div className="p-4 m-4 mt-7 mx-4 shadow-lg shadow-violet-200 border-1 border-violet-100 rounded-2xl min-w-96 lg:w-xl bg-white">
+              <div className='flex justify-center gap-6'>
+                  <p className='font-bold text-2xl  bg-gradient-to-br from-violet-500 to-blue-800 bg-clip-text text-transparent'>Guard</p>
+                  <Shield className='mt-1 text-purple-800' />
+              </div>
+          </div>
         <p className="text-center text-2xl font-semibold pt-3 bg-gradient-to-br from-purple-600 to-blue-600 bg-clip-text text-transparent">Experience Maximum Security</p>
         <div className="relative group my-10 max-w-96">
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
