@@ -13,8 +13,8 @@ export const savePassword=async(req,res)=>{
         
         if(!user)res.status(500).json({message:"user not found"});
 
-        const { encryptedPasword }=encryptPassword(pin,password);
-        const { encryptedName } = encryptPasswordName(pin,name);
+        const encryptedPasword =encryptPassword(pin,password);
+        const encryptedName = encryptPasswordName(pin,name);
 
         user.savedPasswords.push({
             name:encryptedName,
