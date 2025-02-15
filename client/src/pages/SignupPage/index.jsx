@@ -2,8 +2,15 @@ import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { SignupSchema } from "../../schemas/SignupSchema"
 import { Shield } from "lucide-react"
+import {useDispatch} from "react-redux"
+import {setLogin} from "../../state/index.js"
+import {useNavigate} from "react-router-dom"
 
 const SignUp = () => {
+  
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
+
   const{
     register,
     handleSubmit,
@@ -11,8 +18,29 @@ const SignUp = () => {
   }=useForm({
     resolver:zodResolver(SignupSchema)
   })
-  const onSubmit=(data)=>{
-    console.log(data)
+  const onSubmit=async (data)=>{
+    try {
+      delete data.confirmPassword
+      const response=await fetch("http://localhost:3001/auth/register",
+        {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        }
+      )
+      const signup=await response.json()
+      if(signup){
+        dispatch(
+          setLogin({
+            id: signup.id,
+            token: signup.token
+          })
+        )
+        navigate("/")
+      }
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   return (
@@ -22,7 +50,7 @@ const SignUp = () => {
                 <p className='font-bold text-2xl  bg-gradient-to-br from-violet-500 to-blue-800 bg-clip-text text-transparent'>Guard</p>
                 <Shield className='mt-1 text-purple-800' />
             </div>
-        </div>
+      </div>
       
       <div className="relative group">
       <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200 m-4 mt-9" />
@@ -46,6 +74,15 @@ const SignUp = () => {
 
           <button type="submit" className="border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer w-48">Sign Up</button>
         </form>
+        <p className="mt-4 text-sm text-indigo-900">
+          Already have an account?{" "}
+          <span 
+            onClick={() => navigate("/login")} 
+            className="text-transparent bg-clip-text bg-gradient-to-br from-violet-500 to-blue-800 font-semibold cursor-pointer hover:opacity-80 transition-opacity"
+          >
+            Login
+          </span>
+        </p>
       </div>
       </div>
       </div>

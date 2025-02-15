@@ -13,25 +13,17 @@ export const register=async(req,res)=>{
         
         const salt=await bcrypt.genSalt()
         const hashedPassword=await bcrypt.hash(password,salt)
+        const hashedPin=await bcrypt.hash(pin,salt)
 
-        let newUser
-        if(!pin){
-            newUser=new User({
-                username,
-                email,
-                password:hashedPassword
-            })
-        }
-        else{
-            newUser=new User({
-                username,
-                email,
-                password:hashedPassword,
-                pin
-            })
-        }
-        await newUser.save()
-        res.status(201).json({message:"User saved successfully"})
+        const newUser=new User({
+            username,
+            email,
+            password:hashedPassword,
+            pin:hashedPin
+        })
+        const user=await newUser.save()
+        const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
+        res.status(201).json({token,id:user._id.toString()})
 
     } catch (error) {
         res.status(500).json({error:error.message})
@@ -50,20 +42,7 @@ export const login=async(req,res)=>{
 
         const token=jwt.sign({id:user._id},process.env.JWT_SECRET)
         delete user.password
-        res.status(200).json({token,user})
-    } catch (error) {
-        res.status(500).json({error:error.message})
-    }
-}
-
-export const createPin=async(req,res)=>{
-    try {
-        const {id}=req.params
-        const{pin}=req.body
-        const salt=await bcrypt.genSalt()
-        const hashedPin=await bcrypt.hash(pin,salt)
-        await User.findByIdAndUpdate(id,{pin:hashedPin},{new:true})
-        res.status(200).json({message:"Pin created"})
+        res.status(201).json({token,id:user._id.toString()})
     } catch (error) {
         res.status(500).json({error:error.message})
     }

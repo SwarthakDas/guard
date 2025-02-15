@@ -2,8 +2,15 @@ import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { LoginSchema } from "../../schemas/LoginSchema"
 import { Shield } from "lucide-react"
+import {useDispatch} from "react-redux"
+import {setLogin} from "../../state/index.js"
+import {useNavigate} from "react-router-dom"
 
-const SignUp = () => {
+const Login = () => {
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
+
+
   const{
     register,
     handleSubmit,
@@ -11,8 +18,33 @@ const SignUp = () => {
   }=useForm({
     resolver:zodResolver(LoginSchema)
   })
-  const onSubmit=(data)=>{
-    console.log(data)
+  const onSubmit=async (data)=>{
+    try {
+      const response=await fetch("http://localhost:3001/auth/login",
+        {
+          method:"POST",
+          headers:{"Content-Type":"application/json"},
+          body: JSON.stringify(data)
+        }
+      )
+      const login=await response.json()
+      
+      if (!response.ok) {
+        throw new Error(login.message || "Login failed");
+      }
+    
+      dispatch(
+        setLogin({
+          id: login.id,
+          token: login.token,
+        })
+      )
+      navigate("/")
+      
+    } catch (error) {
+      console.error("Login Error:", error.message);
+      alert(error.message); 
+    }
   }
 
   return (
@@ -37,6 +69,15 @@ const SignUp = () => {
 
           <button type="submit" className="border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer w-48">Login</button>
         </form>
+        <p className="mt-4 text-sm text-indigo-900">
+          Dont have an account?{" "}
+          <span 
+            onClick={() => navigate("/signup")} 
+            className="text-transparent bg-clip-text bg-gradient-to-br from-violet-500 to-blue-800 font-semibold cursor-pointer hover:opacity-80 transition-opacity"
+          >
+            Sign up
+          </span>
+        </p>
       </div>
       </div>
       </div>
@@ -44,4 +85,4 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+export default Login

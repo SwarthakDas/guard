@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState={
-    user:null,
+    id:"",
     token:null,
     posts:[]
 }
@@ -11,19 +11,19 @@ export const authSlice=createSlice({
     initialState,
     reducers:{
         setLogin:(state,action)=>{
-            state.user=action.payload.user
+            state.id=action.payload.id
             state.token=action.payload.token
         },
         setLogout:(state)=>{
-            state.user=null
+            state.id=""
             state.token=null
         },
         setPasswords:(state,action)=>{
-            if(state.user)state.passwords=action.payload.passwords;
+            if(state.id)state.passwords=action.payload.passwords;
             else console.error("No passwords found for this user");
         },
         setFavourites:(state,action)=>{
-            if(state.user)state.favourites=action.payload.favourites;
+            if(state.id)state.favourites=action.payload.favourites;
             else console.error("No favourites found for this user");
         }
     }

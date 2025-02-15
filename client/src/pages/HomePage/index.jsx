@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Check, ChevronDown, Key, LogIn, Shield, ShieldCheck, Shuffle, Star, User } from 'lucide-react'
+import { Check, ChevronDown, Key, LogIn, Shield, ShieldCheck, Shuffle, Star, User, Power} from 'lucide-react'
+import { useDispatch, useSelector } from "react-redux"
+import {setLogout} from "../../state/index.js"
+import { useNavigate } from "react-router-dom"
 
 const HomePage = () => {
   const [password,setPassword]=useState("")
@@ -12,8 +15,14 @@ const HomePage = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [showCopied,setShowCopied]=useState(false)
   const passRef=useRef(null)
+  const {id}=useSelector((state)=>state.auth)||""
+  const dispatch=useDispatch()
+  const navigate=useNavigate()
 
-
+  const clickLogin=()=>{
+    navigate("/login")
+  }
+  
   const generator=useCallback(()=>{
     let pass=""
     let str="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
@@ -64,18 +73,42 @@ const HomePage = () => {
                 }`}
               />
               <ul className="relative space-y-4 p-4">
-                <li>
-                  <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
-                    <LogIn className="h-6 w-6" />
-                    <span
-                      className={`ml-4 whitespace-nowrap transition-all duration-300 ${
-                        isExpanded ? "opacity-100" : "opacity-0"
-                      }`}
+              {id ? (
+                  <li>
+                    <a
+                      href="#"
+                      className="flex items-center text-white transition-all duration-300 hover:opacity-75"
+                      
                     >
-                      Login/Signup
-                    </span>
-                  </a>
-                </li>
+                      <Power className="h-6 w-6" />
+                      <span onClick={()=>dispatch(setLogout())}
+                        className={`ml-4 whitespace-nowrap transition-all duration-300 ${
+                          isExpanded ? "opacity-100" : "opacity-0"
+                        }` }
+                      >
+                        Logout
+                      </span>
+                    </a>
+                  </li>
+                ) : (
+                  <li>
+                    <a
+                      href="#"
+                      className="flex items-center text-white transition-all duration-300 hover:opacity-75"
+                      
+                    >
+                      <LogIn className="h-6 w-6" />
+                      <span
+                        className={`ml-4 whitespace-nowrap transition-all duration-300 ${
+                          isExpanded ? "opacity-100" : "opacity-0"
+                        }`} onClick={clickLogin}
+                      >
+                        Login/Signup
+                      </span>
+                    </a>
+                  </li>
+                )}
+
                 <li>
                   <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
                     <Key className="h-6 w-6" />
@@ -137,12 +170,22 @@ const HomePage = () => {
             </div>
           <div className="pt-16 pl-1 pr-1">
             <ul className="space-y-6">
+            {id ? (
               <li>
-                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
+                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75"
+                onClick={()=>dispatch(setLogout())}>
+                  <Power className="h-6 w-6" />
+                  <span className="ml-4 whitespace-nowrap font-medium">Logout</span>
+                </a>
+              </li>
+            ) : (
+              <li>
+                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75" onClick={clickLogin}>
                   <LogIn className="h-6 w-6" />
                   <span className="ml-4 whitespace-nowrap font-medium">Login/Signup</span>
                 </a>
               </li>
+            )}
               <hr className="border-white "/>
               <li>
                 <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
