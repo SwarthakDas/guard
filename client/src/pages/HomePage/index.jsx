@@ -124,7 +124,7 @@ const HomePage = () => {
                     <span
                       className={`ml-4 whitespace-nowrap transition-all duration-300 ${
                         isExpanded ? "opacity-100" : "opacity-0"
-                      }`}
+                      }`} onClick={()=>{navigate("/favourite-passwords")}}
                     >
                       Favourites
                     </span>
@@ -161,7 +161,7 @@ const HomePage = () => {
     ):(
       <div>
         <div className="w-1/4 min-h-screen fixed left-0 top-0 bg-gradient-to-b from-purple-600 to-blue-600 p-6">
-        <div className='flex justify-center gap-6'>
+        <div className='flex justify-center gap-6 mt-5'>
                 <p className='font-bold text-2xl  bg-gradient-to-br from-violet-50 to-blue-100 bg-clip-text text-transparent'>Guard</p>
                 <Shield className='mt-1 text-white' />
             </div>
@@ -192,7 +192,8 @@ const HomePage = () => {
               </li>
               <hr className="border-white "/>
               <li>
-                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
+                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75"
+                onClick={()=>{navigate("/favourite-passwords")}}>
                   <Star className="h-6 w-6" />
                   <span className="ml-4 whitespace-nowrap font-medium">Favourites</span>
                 </a>
@@ -226,7 +227,7 @@ const HomePage = () => {
                   <Shield className='mt-1 text-purple-800' />
               </div>
           </div>
-        <p className="text-center text-2xl font-semibold pt-3 bg-gradient-to-br from-purple-600 to-blue-600 bg-clip-text text-transparent">Experience Maximum Security</p>
+        <p className="text-center text-2xl font-semibold pt-6 bg-gradient-to-br from-purple-600 to-blue-600 bg-clip-text text-transparent">Experience Maximum Security</p>
         <div className="relative group my-10 max-w-96">
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
           <div className="relative">
@@ -283,7 +284,7 @@ const HomePage = () => {
         </div>
         <div className="flex justify-between gap-6 my-10">
           <button className="relative aspect-square border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 px-9 font-medium bg-gradient-to-br from-violet-600 to-blue-800 bg-clip-text text-transparent cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();}}>Copy</button>
-          <button className=" border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save")}}>Copy <br/>&<br/>Save</button>
+          <button className=" border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save", { state: { password } });}}>Copy <br/>&<br/>Save</button>
         </div>
         {showCopied && (
         <div className=" bottom-1/5 left-1/2 ml-32 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-out">

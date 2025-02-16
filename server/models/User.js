@@ -25,13 +25,10 @@ const UserSchema=new mongoose.Schema({
         {
             name:String,
             password:String,
-            created:{type:Date,default:Date.now}
+            created:{type:Date,default:Date.now},
+            favourite:{type:Boolean,default:false}
         }
     ],
-    favourites:{
-        type:[String],
-        default:[]
-    }
 },{timestamps:true})
 
 const User=mongoose.model("User",UserSchema)

@@ -48,11 +48,35 @@ export const getPasswords=async(req,res)=>{
             name: decryptPasswordName(pin,pass.name),
             password: decryptPassword(pin,pass.password),
             created: pass.created,
-            favourite:user.favourites.includes(pass._id.toString())
+            favourite:pass.favourite
         }));
 
         res.status(200).json({ savedPasswords: decryptedPasswords });
 
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+}
+
+export const deletePassword=async(req,res)=>{
+    try {
+        const { id } = req.params;
+        const {passwordId}=req.body
+        const user = await User.findById(id);
+        if (!user) return res.status(400).json({ message: "User not found" });
+        if (!user.savedPasswords || user.savedPasswords.length === 0) {
+            return res.status(400).json({ message: "No passwords found to delete" });
+        }
+
+        const updatedPasswords = user.savedPasswords.filter(pass => pass._id.toString() !== passwordId);
+        if (updatedPasswords.length === user.savedPasswords.length) {
+            return res.status(404).json({ message: "Password not found" });
+        }
+
+        user.savedPasswords = updatedPasswords;
+        await user.save();
+
+        res.status(200).json({ message: "Password deleted successfully", savedPasswords: user.savedPasswords });
     } catch (error) {
         res.status(500).json({error:error.message})
     }

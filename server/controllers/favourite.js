@@ -8,8 +8,14 @@ export const favourite=async(req,res)=>{
         const{passwordId}=req.body
         const user=await User.findById(id)
         if(!user)res.status(500).json({message:"user not found"});
-        user.favourites.push(passwordId)
-        res.status(200).json({message:"Password favourited"})
+
+        const passwordEntry = user.savedPasswords.find(pass => pass._id.toString() === passwordId);
+        if (!passwordEntry) return res.status(404).json({ message: "Password not found" });
+
+        passwordEntry.favourite = !passwordEntry.favourite;
+        await user.save();
+
+        res.status(200).json({ message: "Password favourite status updated", favourite: passwordEntry.favourite });
     } catch (error) {
         res.status(500).json({error:error.message})
     }
@@ -26,13 +32,14 @@ export const savedFavourites=async(req,res)=>{
         }
 
         const decryptedPasswords = user.savedPasswords
-        .map((pass) => ({
-            id:pass._id.toString(),
-            name: decryptPasswordName(pin,pass.name, pass.nameIv),
-            password: decryptPassword(pin,pass.password, pass.iv),
+        .filter(pass => pass.favourite)
+        .map(pass => ({
+            id: pass._id.toString(),
+            name: decryptPasswordName(pin, pass.name),
+            password: decryptPassword(pin, pass.password),
             created: pass.created,
-        }))
-        .filter((pass) => user.favourites.includes(pass.id.toString()));
+            favourite: pass.favourite
+        }));
 
         if(!decryptedPasswords)return res.status(400).json({ message: "No favourite passwords found" });
 
