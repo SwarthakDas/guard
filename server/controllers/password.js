@@ -2,6 +2,7 @@ import User from "../models/User.js"
 import { decryptPassword, encryptPassword } from "../helpers/security.js"
 import { decryptPasswordName, encryptPasswordName } from "../helpers/nameSecurity.js"
 import dotenv from "dotenv"
+import bcrypt from "bcrypt"
 
 dotenv.config()
 
@@ -12,6 +13,9 @@ export const savePassword=async(req,res)=>{
         const user=await User.findById(id)
         
         if(!user)res.status(500).json({message:"user not found"});
+
+        const matchPin=await bcrypt.compare(pin,user.pin)
+        if(!matchPin)return res.status(400).json({message:"Incorrect Pin"});
 
         const encryptedPasword =encryptPassword(pin,password);
         const encryptedName = encryptPasswordName(pin,name);

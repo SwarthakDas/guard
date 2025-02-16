@@ -59,9 +59,6 @@ const HomePage = () => {
     setTimeout(() => setShowCopied(false), 2000);
   };
   
-
-  
-
   return (
     <div className="flex justify-center gap-64">
       {isMobile?(<div className="absolute top-1/3 -left-2" style={{ zIndex: menuZIndex }}>
@@ -115,7 +112,7 @@ const HomePage = () => {
                     <span
                       className={`ml-4 whitespace-nowrap transition-all duration-300 ${
                         isExpanded ? "opacity-100" : "opacity-0"
-                      }`}
+                      }`} onClick={()=>{navigate("/saved-passwords")}}
                     >
                       Your Passwords
                     </span>
@@ -188,7 +185,7 @@ const HomePage = () => {
             )}
               <hr className="border-white "/>
               <li>
-                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
+                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75" onClick={()=>{navigate("/saved-passwords")}}>
                   <Key className="h-6 w-6" />
                   <span className="ml-4 whitespace-nowrap font-medium">Your Passwords</span>
                 </a>
@@ -286,7 +283,7 @@ const HomePage = () => {
         </div>
         <div className="flex justify-between gap-6 my-10">
           <button className="relative aspect-square border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 px-9 font-medium bg-gradient-to-br from-violet-600 to-blue-800 bg-clip-text text-transparent cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();}}>Copy</button>
-          <button className=" border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();}}>Copy <br/>&<br/>Save</button>
+          <button className=" border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save")}}>Copy <br/>&<br/>Save</button>
         </div>
         {showCopied && (
         <div className=" bottom-1/5 left-1/2 ml-32 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-out">
