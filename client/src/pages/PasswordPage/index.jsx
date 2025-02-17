@@ -42,8 +42,9 @@ const PasswordPage = () => {
           if(!getPasswords.savedPasswords)setError(getPasswords.message);
           else{
             setPasswords(getPasswords.savedPasswords)
-            setLoading(false);
+           
           }
+          setLoading(false);
         }
         else alert("Incorrect Pin");
         

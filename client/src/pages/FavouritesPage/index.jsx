@@ -42,8 +42,8 @@ const FavouritesPage = () => {
           if(!getPasswords.savedFavourites)setError(getPasswords.message);
           else{
             setPasswords(getPasswords.savedFavourites)
-            setLoading(false);
           }
+          setLoading(false);
         }
         else alert("Incorrect Pin");
         
@@ -177,7 +177,6 @@ const FavouritesPage = () => {
         <div className="p-4">
         {loading && <p className="text-center text-gray-500">Loading passwords...</p>}
         {!loading && passwords.length===0 && <p className="text-center text-gray-500">No Favourite Passwords found</p>}
-        {error && <p className="text-center text-red-500">{error}</p>}
         
         {!loading && !error && (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
