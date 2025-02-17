@@ -285,9 +285,9 @@ const HomePage = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-between gap-2 lg:gap-6 my-10 max-sm:flex-col pt-16 lg:mt-0">
+        <div className="flex justify-between gap-2 lg:gap-6 my-10 pt-16 lg:pt-0">
           <button className="relative border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 px-9 font-medium bg-gradient-to-br from-violet-600 to-blue-800 bg-clip-text text-transparent cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();}}>Copy</button>
-          <button className="relative border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save", { state: { password } });}}>Save</button>
+          <button className="relative lg:static border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save", { state: { password } });}}>Save</button>
         </div>
         {showCopied && (
         <div className=" bottom-1/5 left-1/2 ml-32 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-out">
