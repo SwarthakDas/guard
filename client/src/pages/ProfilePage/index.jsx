@@ -64,7 +64,6 @@ const ProfilePage = () => {
   const onSubmit=async(data)=>{
     try {
           delete data.confirmPassword
-          console.log(data)
           const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/update-password`,
             {
               method:"POST",
