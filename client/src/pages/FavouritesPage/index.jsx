@@ -176,6 +176,7 @@ const FavouritesPage = () => {
         <div>
         <div className="p-4">
         {loading && <p className="text-center text-gray-500">Loading passwords...</p>}
+        {!loading && passwords.length===0 && <p className="text-center text-gray-500">No Favourite Passwords found</p>}
         {error && <p className="text-center text-red-500">{error}</p>}
         
         {!loading && !error && (
