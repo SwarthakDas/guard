@@ -61,7 +61,7 @@ const HomePage = () => {
   
   return (
     <div className="flex justify-center gap-64">
-      {isMobile?(<div className="absolute top-1/3 -left-2" style={{ zIndex: menuZIndex }}>
+      {isMobile?(<div className="absolute top-1/2 -left-2" style={{ zIndex: menuZIndex }}>
           <div className="mx-auto max-w-md " >
             <nav className="relative " onClick={() =>{ setIsExpanded(true);setTimeout(() => setMenuZIndex(50), 50)}} onMouseLeave={() => { setIsExpanded(false);setTimeout(() => setMenuZIndex(0), 300);}}  >
               <div
@@ -222,13 +222,14 @@ const HomePage = () => {
       
 
 
-      <div className="flex flex-col items-center ">
-        <div className="p-4 m-4 mt-7 mx-4 shadow-lg shadow-violet-200 border-1 border-violet-100 rounded-2xl min-w-96 lg:w-xl bg-white">
+      <div className="flex flex-col items-center max-w-full">
+        <div className="p-4 m-4 mt-7 mx-4 shadow-lg shadow-violet-200 border-1 border-violet-100 rounded-2xl min-w-96 lg:w-xl bg-white justify-center">
               <div className='flex justify-center gap-6'>
                   <p className='font-bold text-2xl  bg-gradient-to-br from-violet-500 to-blue-800 bg-clip-text text-transparent'>Guard</p>
                   <Shield className='mt-1 text-purple-800' />
               </div>
           </div>
+          <div className="flex flex-col items-center">
         <p className="text-center text-2xl font-semibold pt-6 bg-gradient-to-br from-purple-600 to-blue-600 bg-clip-text text-transparent">Experience Maximum Security</p>
         <div className="relative group my-10 max-w-96">
           <div className="absolute -inset-1 bg-gradient-to-r from-purple-500 to-blue-500 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
@@ -239,8 +240,8 @@ const HomePage = () => {
             </button>
           </div>
         </div>
-        <div className="flex max-w-80 items-center w-full justify-center ">
-          <div className="w-40 relative">
+        <div className="flex max-w-80 items-center w-full justify-center">
+          <div className="w-36 relative">
             <input className="cursor-pointer" type="range" min={6} max={75} value={length} onChange={(e)=>setLength(e.target.value)} />
             <label className="text-indigo-800 font-medium">Length:<input value={length} placeholder={length} className=" w-8 rounded-sm ml-1 px-1 cursor-pointer" onChange={(e) => setLength(e.target.value)}/></label>
           </div>
@@ -284,9 +285,9 @@ const HomePage = () => {
             )}
           </div>
         </div>
-        <div className="flex justify-between gap-6 my-10">
-          <button className="relative aspect-square border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 px-9 font-medium bg-gradient-to-br from-violet-600 to-blue-800 bg-clip-text text-transparent cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();}}>Copy</button>
-          <button className=" border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save", { state: { password } });}}>Copy <br/>&<br/>Save</button>
+        <div className="flex justify-between gap-2 my-10 max-sm:flex-col">
+          <button className="relative border-1 rounded-2xl p-4 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 px-9 font-medium bg-gradient-to-br from-violet-600 to-blue-800 bg-clip-text text-transparent cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();}}>Copy</button>
+          <button className=" border-1 rounded-2xl p-6 px-9 shadow-lg hover:shadow-xl border-indigo-100 hover:border-indigo-300 transition-all duaration-300 hover:scale-105 font-medium text-wrap bg-gradient-to-br from-violet-500 to-blue-800 text-white cursor-pointer" onClick={()=>{copyToClipboard(); showCopiedNotification();navigate("/save", { state: { password } });}}>Save</button>
         </div>
         {showCopied && (
         <div className=" bottom-1/5 left-1/2 ml-32 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 animate-fade-in-out">
@@ -294,6 +295,7 @@ const HomePage = () => {
           Copied
         </div>
         )}
+      </div>
       </div>
       
 
