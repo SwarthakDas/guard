@@ -61,7 +61,7 @@ const HomePage = () => {
   
   return (
     <div className="flex justify-center gap-64">
-      {isMobile?(<div className="absolute top-1/2 -left-2" style={{ zIndex: menuZIndex }}>
+      {isMobile?(<div className="absolute top-3/5 -left-2" style={{ zIndex: menuZIndex }}>
           <div className="mx-auto max-w-md " >
             <nav className="relative " onClick={() =>{ setIsExpanded(true);setTimeout(() => setMenuZIndex(50), 50)}} onMouseLeave={() => { setIsExpanded(false);setTimeout(() => setMenuZIndex(0), 300);}}  >
               <div
