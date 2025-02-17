@@ -136,7 +136,7 @@ const HomePage = () => {
                     <span
                       className={`ml-4 whitespace-nowrap transition-all duration-300 ${
                         isExpanded ? "opacity-100" : "opacity-0"
-                      }`}
+                      }`} onClick={()=>{navigate("/profile")}}
                     >
                       Account
                     </span>
@@ -200,7 +200,8 @@ const HomePage = () => {
               </li>
               <hr className="border-white "/>
               <li>
-                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75">
+                <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75"
+                onClick={()=>{navigate("/profile")}}>
                   <User className="h-6 w-6" />
                   <span className="ml-4 whitespace-nowrap font-medium">Account</span>
                 </a>

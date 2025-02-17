@@ -65,3 +65,39 @@ export const verifyPin=async(req,res)=>{
     }
 }
 
+export const userDetails=async(req,res)=>{
+    try {
+        const {id}=req.params
+        const user=await User.findById(id)
+        if(!user)return res.status(400).json({message:"User doesnot exist"});
+
+        res.status(200).json({username:user.username,email:user.email});
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+}
+
+export const updatePassword=async(req,res)=>{
+    try {
+        const {id}=req.params
+        const {oldPassword,newPassword}=req.body
+
+        const user=await User.findById(id)
+        if(!user)return res.status(400).json({message:"User doesnot exist"});
+
+        const matchPassword=await bcrypt.compare(oldPassword,user.password)
+        if(!matchPassword)return res.status(400).json({message:"Incorrect Original Password"});
+
+        const salt=await bcrypt.genSalt()
+        const hashedPassword=await bcrypt.hash(newPassword,salt)
+
+        user.password=hashedPassword
+
+        await user.save()
+
+        res.status(200).json({message:"Password Changed Successfully"});
+
+    } catch (error) {
+        res.status(500).json({error:error.message})
+    }
+}
