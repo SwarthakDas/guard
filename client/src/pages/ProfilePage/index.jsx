@@ -29,6 +29,7 @@ const ProfilePage = () => {
       register,
       handleSubmit,
       formState:{errors},
+      reset
     }=useForm({
       resolver: zodResolver(schema),
     })
@@ -83,6 +84,7 @@ const ProfilePage = () => {
   const showUpdatedNotification = () => {
     setShowUpdated(true);
     setTimeout(() => setShowUpdated(false), 2000);
+    reset()
   };
 
   return (
@@ -137,11 +139,8 @@ const ProfilePage = () => {
         )}
     </div>
       </div>
-      
-      
       </div>
       </div>
-      
     </div>
   )
 }

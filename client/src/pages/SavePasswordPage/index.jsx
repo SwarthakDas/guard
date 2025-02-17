@@ -58,7 +58,7 @@ const SavePasswordPage = () => {
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 items-center">
           <input type="text" placeholder="Password Name"{...register("name")} className="p-2 rounded-lg border-indigo-50 focus:border-purple-500 focus:ring-2 focus:ring-violet-200 border-2 transition-all duration-300"/>
 
-          <input type="text" placeholder="Password"{...register("password")} className="p-2 rounded-lg border-indigo-50 focus:border-purple-500 focus:ring-2 focus:ring-violet-200 border-2 transition-all duration-300" value={password}/>
+          <input type="text" placeholder="Password"{...register("password")} className="p-2 rounded-lg border-indigo-50 focus:border-purple-500 focus:ring-2 focus:ring-violet-200 border-2 transition-all duration-300" value={password} onChange={(e) => setPassword(e.target.value)}/>
           
           <input type="password" placeholder="6-digit Pin"{...register("pin")} className="p-2 rounded-lg border-indigo-50 focus:border-purple-500 focus:ring-2 focus:ring-violet-200 border-2 transition-all duration-300"/>
 
