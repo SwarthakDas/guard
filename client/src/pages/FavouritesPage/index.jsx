@@ -21,7 +21,7 @@ const FavouritesPage = () => {
   }=useForm()
     const pinVerify=async(data)=>{
       try {
-        const response=await fetch(`http://localhost:3001/auth/${id}/pin-verify`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/pin-verify`,
           {
             method:"POST",
             headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -31,7 +31,7 @@ const FavouritesPage = () => {
         const verify=await response.json()
         if(verify.message){
           setPinVerified(true)
-          const passwordResponse=await fetch(`http://localhost:3001/favourite/${id}/favourites`,
+          const passwordResponse=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/${id}/favourites`,
             {
               method:"POST",
               headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -56,7 +56,7 @@ const FavouritesPage = () => {
     const toggleFavourite = async(passwordId) => {
       if (window.confirm("Are you sure you want to remove this password from Favourites?")) {
       try {
-        const response=await fetch(`http://localhost:3001/favourite/${id}`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/${id}`,
           {
             method:"POST",
             headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -79,7 +79,7 @@ const FavouritesPage = () => {
     const handleDelete = async(passwordId) => {
       if (window.confirm("Are you sure you want to delete this password?")) {
         try {
-          const response=await fetch(`http://localhost:3001/password/${id}/delete`,
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/${id}/delete`,
             {
               method:"POST",
               headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},

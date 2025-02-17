@@ -21,7 +21,7 @@ const PasswordPage = () => {
   }=useForm()
     const pinVerify=async(data)=>{
       try {
-        const response=await fetch(`http://localhost:3001/auth/${id}/pin-verify`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/pin-verify`,
           {
             method:"POST",
             headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -31,7 +31,7 @@ const PasswordPage = () => {
         const verify=await response.json()
         if(verify.message){
           setPinVerified(true)
-          const passwordResponse=await fetch(`http://localhost:3001/password/${id}`,
+          const passwordResponse=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/${id}`,
             {
               method:"POST",
               headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -55,7 +55,7 @@ const PasswordPage = () => {
 
     const toggleFavourite = async(passwordId) => {
       try {
-        const response=await fetch(`http://localhost:3001/favourite/${id}`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/${id}`,
           {
             method:"POST",
             headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -77,7 +77,7 @@ const PasswordPage = () => {
     const handleDelete = async(passwordId) => {
       if (window.confirm("Are you sure you want to delete this password?")) {
         try {
-          const response=await fetch(`http://localhost:3001/password/${id}/delete`,
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/${id}/delete`,
             {
               method:"POST",
               headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},

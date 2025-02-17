@@ -24,7 +24,7 @@ const SignUp = () => {
   const onSubmit=async (data)=>{
     try {
       delete data.confirmPassword
-      const response=await fetch("http://localhost:3001/auth/register",
+      const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/register`,
         {
           method:"POST",
           headers:{"Content-Type":"application/json"},

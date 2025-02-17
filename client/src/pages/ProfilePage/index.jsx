@@ -38,7 +38,7 @@ const ProfilePage = () => {
   useEffect(()=>{
     const getDetails=async ()=>{
         try {
-            const response=await fetch(`http://localhost:3001/auth/${id}/details`,
+            const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/details`,
                 {
                   method:"GET",
                   headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
@@ -65,7 +65,7 @@ const ProfilePage = () => {
     try {
           delete data.confirmPassword
           console.log(data)
-          const response=await fetch(`http://localhost:3001/auth/${id}/update-password`,
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/update-password`,
             {
               method:"POST",
               headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},

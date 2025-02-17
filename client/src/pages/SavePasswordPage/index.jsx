@@ -18,7 +18,7 @@ const SavePasswordPage = () => {
   }=useForm()
   const onSubmit=async (data)=>{
     try {
-      const response=await fetch(`http://localhost:3001/password/${id}/save`,
+      const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/${id}/save`,
         {
           method:"POST",
           headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
