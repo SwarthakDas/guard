@@ -83,7 +83,7 @@ export const logout=asyncHandler(async(req, res)=>{
   )
   const options={
     httpOnly: true,
-    secure: true
+    secure: process.env.NODE_ENV==="production"
   }
   
   return res.status(200)
@@ -155,7 +155,7 @@ export const refreshAccessToken=asyncHandler(async(req, res)=>{
     }
     const options={
       httpOnly: true,
-      secure: true
+      secure: process.env.NODE_ENV==="production"
     }
     const {accessToken, refreshToken}=await generateAccessAndRefreshToken(user._id)
   
