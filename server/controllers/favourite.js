@@ -1,50 +1,49 @@
 import { decryptPasswordName } from "../helpers/nameSecurity.js"
 import { decryptPassword } from "../helpers/security.js"
 import User from "../models/User.js"
+import { ApiError } from "../utils/ApiError.js"
+import {ApiResponse} from "../utils/ApiResponse.js"
+import { asyncHandler } from "../utils/AsyncHandler.js"
 
-export const favourite=async(req,res)=>{
-    try {
-        const {id}=req.params
-        const{passwordId}=req.body
-        const user=await User.findById(id)
-        if(!user)res.status(500).json({message:"user not found"});
+export const favourite=asyncHandler(async(req,res)=>{
+    const{passwordId}=req.body
+    const user=await User.findById(req.user._id)
+    if(!user)throw new ApiError(500,"user not found");
 
-        const passwordEntry = user.savedPasswords.find(pass => pass._id.toString() === passwordId);
-        if (!passwordEntry) return res.status(404).json({ message: "Password not found" });
+    const passwordEntry = user.savedPasswords.find(pass => pass._id.toString() === passwordId);
+    if (!passwordEntry)throw new ApiError(500,"failed to fetch password");
 
-        passwordEntry.favourite = !passwordEntry.favourite;
-        await user.save();
+    passwordEntry.favourite = !passwordEntry.favourite;
+    await user.save();
 
-        res.status(200).json({ message: "Password favourite status updated", favourite: passwordEntry.favourite });
-    } catch (error) {
-        res.status(500).json({error:error.message})
-    }
-}
+    return res.status(200).json(
+        new ApiResponse(200, {favourite: passwordEntry.favourite }, "Password favourite status updated")
+    )
+})
 
-export const savedFavourites=async(req,res)=>{
-    try {
-        const {id}=req.params
-        const {pin}=req.body
-        const user=await User.findById(id)
-        if (!user) return res.status(400).json({ message: "User not found" });
-        if (!user.savedPasswords || user.savedPasswords.length === 0) {
-            return res.status(400).json({ message: "No passwords found" });
-        }
+export const savedFavourites=asyncHandler(async(req,res)=>{
+    const {pin}=req.body;
+    if(!pin || pin.trim() === "")throw new ApiError(400, "PIN is required");
+    const user=await User.findById(req.user._id)
+    if (!user)throw new ApiError(500,"user not found");
+    if (!user.savedPasswords || user.savedPasswords.length === 0)throw new ApiError(400,"no passwords found");
 
-        const decryptedPasswords = user.savedPasswords
-        .filter(pass => pass.favourite)
-        .map(pass => ({
-            id: pass._id.toString(),
-            name: decryptPasswordName(pin, pass.name),
-            password: decryptPassword(pin, pass.password),
-            created: pass.created,
-            favourite: pass.favourite
-        }));
+    const matchPin=await user.isPinCorrect(pin)
+    if(!matchPin)throw new ApiError(401,"Incorrect pin");
 
-        if(!decryptedPasswords)return res.status(400).json({ message: "No favourite passwords found" });
+    const decryptedPasswords = user.savedPasswords
+    .filter(pass => pass.favourite)
+    .map(pass => ({
+        id: pass._id.toString(),
+        name: decryptPasswordName(pin, pass.name),
+        password: decryptPassword(pin, pass.password),
+        created: pass.created,
+        favourite: pass.favourite
+    }));
 
-        res.status(200).json({ savedFavourites: decryptedPasswords });
-    } catch (error) {
-        res.status(500).json({error:error.message})
-    }
-}
+    if(decryptedPasswords.length === 0)throw new ApiError(400,"no favourite passwords found");
+
+    return res.status(200).json(
+        new ApiResponse(200, { savedFavourites: decryptedPasswords }, "Favourite passwords fetched successfully")
+    )
+})

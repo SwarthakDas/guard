@@ -1,12 +1,10 @@
 import {useForm} from "react-hook-form"
 import { Check, Shield } from "lucide-react"
-import { useSelector} from "react-redux"
 import {useLocation, useNavigate} from "react-router-dom"
 import { useState } from "react"
 
 const SavePasswordPage = () => {
   const navigate=useNavigate()
-  const {id,token}=useSelector((state)=>state.auth)
   const [showCopied,setShowCopied]=useState(false)
   const location = useLocation();
   const [password,setPassword]=useState(location.state?.password)
@@ -18,17 +16,22 @@ const SavePasswordPage = () => {
   }=useForm()
   const onSubmit=async (data)=>{
     try {
-      const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/${id}/save`,
+      const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/save`,
         {
           method:"POST",
-          headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+          headers:{"Content-Type": "application/json"},
+          credentials: "include",
           body: JSON.stringify(data)
         }
       )
-      const verify=await response.json()
-      if(verify.message==="Password saved successfully"){showCopiedNotification();reset();}
-      else alert(verify.message);
-      setPassword("")
+      const result=await response.json()
+      if (result.success) {
+      showCopiedNotification();
+      reset();
+      setPassword("");
+      } else{
+        alert(result.message);
+      }
     } catch (error) {
       console.error("Login Error:", error.message);
       alert(error.message); 

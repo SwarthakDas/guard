@@ -1,10 +1,8 @@
-import express from "express"
-import {verifyToken} from "../middleware/auth.js"
+import {Router} from "express"
+import {verifyJWT} from "../middleware/auth.js"
 import { favourite, savedFavourites } from "../controllers/favourite.js"
 
-const router=express.Router()
+export const router=Router()
 
-router.post("/:id",verifyToken,favourite)
-router.post("/:id/favourites",verifyToken,savedFavourites)
-
-export default router
+router.post("/toggle",verifyJWT,favourite)
+router.post("/get-favourites",verifyJWT,savedFavourites)

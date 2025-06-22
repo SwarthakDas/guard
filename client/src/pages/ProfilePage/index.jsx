@@ -1,5 +1,4 @@
 import { Check, Shield } from "lucide-react"
-import {useSelector} from "react-redux"
 import {useNavigate} from "react-router-dom"
 import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -8,7 +7,6 @@ import * as z from "zod";
 
 const ProfilePage = () => {
   const navigate=useNavigate()
-  const {id,token}=useSelector((state)=>state.auth)
   const [username,setUsername]=useState("")
   const [email,setEmail]=useState("")
   const [updatePassword,setUpdatePassword]=useState(false)
@@ -38,43 +36,41 @@ const ProfilePage = () => {
   useEffect(()=>{
     const getDetails=async ()=>{
         try {
-            const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/details`,
-                {
-                  method:"GET",
-                  headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
-                }
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/details`,
+              {
+                method:"GET",
+                headers:{"Content-Type": "application/json"},
+                credentials: "include"
+              }
           )
           const result=await response.json()
           
-          if (!response.ok) {
-            throw new Error("Login failed");
-          }
-          setUsername(result.username)
-          setEmail(result.email)
+          if (!result.success)throw new Error("Login failed");
+          setUsername(result.data.username)
+          setEmail(result.data.email)
         } catch (error) {
           console.error(error.message);
           alert(error.message); 
         }
       }
       getDetails()
-    }, [id, token]);
+    }, []);
   
   const homeNavigate=()=>{navigate("/")}
 
   const onSubmit=async(data)=>{
     try {
           delete data.confirmPassword
-          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/update-password`,
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/update-password`,
             {
               method:"POST",
-              headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+              headers:{"Content-Type": "application/json"},
+              credentials: "include",
               body: JSON.stringify(data)
             }
           )
           const result=await response.json()
-          if(result.message==="Password Changed Successfully"){
-            showUpdatedNotification()
-          }
+          if(result.success)showUpdatedNotification();
 
         } catch (error) {
           console.error(error)

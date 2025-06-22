@@ -1,7 +1,6 @@
 import { Check, Copy, Eye, EyeOff, Shield, StarIcon } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 const FavouritesPage = () => {
@@ -11,7 +10,6 @@ const FavouritesPage = () => {
   const [error, setError] = useState(null);
   const navigate=useNavigate()
   const homeNavigate=()=>{navigate("/")}
-  const {id,token}=useSelector((state)=>state.auth)
   const [visiblePasswords, setVisiblePasswords] = useState({})
   const [showCopied,setShowCopied]=useState(false)
 
@@ -21,27 +19,29 @@ const FavouritesPage = () => {
   }=useForm()
     const pinVerify=async(data)=>{
       try {
-        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/pin-verify`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/pin-verify`,
           {
             method:"POST",
-            headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+            headers:{"Content-Type": "application/json"},
+            credentials: "include",
             body: JSON.stringify(data)
           }
         )
         const verify=await response.json()
-        if(verify.message){
+        if(verify.success){
           setPinVerified(true)
-          const passwordResponse=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/${id}/favourites`,
+          const passwordResponse=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/get-favourites`,
             {
               method:"POST",
-              headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+              headers:{"Content-Type": "application/json"},
+              credentials: "include",
               body: JSON.stringify(data)
             }
           )
-          const getPasswords=await passwordResponse.json()
-          if(!getPasswords.savedFavourites)setError(getPasswords.message);
+          const fetchedData=await passwordResponse.json()
+          if(!fetchedData.success)setError(fetchedData.message);
           else{
-            setPasswords(getPasswords.savedFavourites)
+            setPasswords(fetchedData.data.savedFavourites)
           }
           setLoading(false);
         }
@@ -56,17 +56,18 @@ const FavouritesPage = () => {
     const toggleFavourite = async(passwordId) => {
       if (window.confirm("Are you sure you want to remove this password from Favourites?")) {
       try {
-        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/${id}`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/toggle`,
           {
             method:"POST",
-            headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+            headers:{"Content-Type": "application/json"},
+            credentials: "include",
             body: JSON.stringify({passwordId})
           }
         )
         const result=await response.json()
-        if(result.message==="Password favourite status updated"){
+        if(result.success){
           setPasswords(passwords.map(pass =>
-            pass.id === passwordId ? { ...pass, favourite: result.favourite } : pass
+            pass.id === passwordId ? { ...pass, favourite: result.data.favourite } : pass
           ));
         }
       } catch (error) {
@@ -79,15 +80,16 @@ const FavouritesPage = () => {
     const handleDelete = async(passwordId) => {
       if (window.confirm("Are you sure you want to delete this password?")) {
         try {
-          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/${id}/delete`,
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/delete`,
             {
               method:"POST",
-              headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+              headers:{"Content-Type": "application/json"},
+              credentials: "include",
               body: JSON.stringify({passwordId})
             }
           )
           const result=await response.json()
-          if(result.message==="Password deleted successfully"){
+          if(result.success){
             setPasswords(passwords.filter(pass => pass.id !== passwordId));
           }
         } catch (error) {

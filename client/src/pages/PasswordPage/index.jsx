@@ -1,7 +1,6 @@
 import { Check, Copy, Eye, EyeOff, Shield, StarIcon } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useSelector } from "react-redux"
 import { useNavigate } from "react-router-dom"
 
 const PasswordPage = () => {
@@ -11,7 +10,6 @@ const PasswordPage = () => {
   const [error, setError] = useState(null);
   const navigate=useNavigate()
   const homeNavigate=()=>{navigate("/")}
-  const {id,token}=useSelector((state)=>state.auth)
   const [visiblePasswords, setVisiblePasswords] = useState({})
   const [showCopied,setShowCopied]=useState(false)
 
@@ -21,29 +19,28 @@ const PasswordPage = () => {
   }=useForm()
     const pinVerify=async(data)=>{
       try {
-        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/${id}/pin-verify`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/pin-verify`,
           {
             method:"POST",
-            headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+            headers:{"Content-Type": "application/json"},
+            credentials: "include",
             body: JSON.stringify(data)
           }
         )
         const verify=await response.json()
-        if(verify.message){
+        if(verify.success){
           setPinVerified(true)
-          const passwordResponse=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/${id}`,
+          const passwordResponse=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/get-passwords`,
             {
               method:"POST",
-              headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+              headers:{"Content-Type": "application/json"},
+              credentials: "include",
               body: JSON.stringify(data)
             }
           )
-          const getPasswords=await passwordResponse.json()
-          if(!getPasswords.savedPasswords)setError(getPasswords.message);
-          else{
-            setPasswords(getPasswords.savedPasswords)
-           
-          }
+          const fetchedData=await passwordResponse.json()
+          if(!fetchedData.success)setError(fetchedData.message);
+          else setPasswords(fetchedData.data.savedPasswords);
           setLoading(false);
         }
         else alert("Incorrect Pin");
@@ -56,17 +53,18 @@ const PasswordPage = () => {
 
     const toggleFavourite = async(passwordId) => {
       try {
-        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/${id}`,
+        const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/favourite/toggle`,
           {
             method:"POST",
-            headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+            headers:{"Content-Type": "application/json"},
+            credentials: "include",
             body: JSON.stringify({passwordId})
           }
         )
         const result=await response.json()
-        if(result.message==="Password favourite status updated"){
+        if(result.success){
           setPasswords(passwords.map(pass =>
-            pass.id === passwordId ? { ...pass, favourite: result.favourite } : pass
+            pass.id === passwordId ? { ...pass, favourite: result.data.favourite } : pass
           ));
         }
       } catch (error) {
@@ -78,15 +76,16 @@ const PasswordPage = () => {
     const handleDelete = async(passwordId) => {
       if (window.confirm("Are you sure you want to delete this password?")) {
         try {
-          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/${id}/delete`,
+          const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/password/delete`,
             {
               method:"POST",
-              headers:{"Authorization":`Bearer ${token}`,"Content-Type": "application/json"},
+              headers:{"Content-Type": "application/json"},
+              credentials: "include",
               body: JSON.stringify({passwordId})
             }
           )
           const result=await response.json()
-          if(result.message==="Password deleted successfully"){
+          if(result.success){
             setPasswords(passwords.filter(pass => pass.id !== passwordId));
           }
         } catch (error) {

@@ -2,14 +2,12 @@ import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { LoginSchema } from "../../schemas/LoginSchema"
 import { Shield } from "lucide-react"
-import {useDispatch} from "react-redux"
-import {setLogin} from "../../state/index.js"
 import {useNavigate} from "react-router-dom"
+import { useAuth } from "../../state/AuthContext"
 
 const Login = () => {
-  const dispatch=useDispatch()
   const navigate=useNavigate()
-
+  const { checkAuth } = useAuth();
 
   const{
     register,
@@ -24,23 +22,17 @@ const Login = () => {
         {
           method:"POST",
           headers:{"Content-Type":"application/json"},
+          credentials: "include",
           body: JSON.stringify(data)
         }
       )
       const login=await response.json()
       
-      if (!response.ok) {
+      if (!login.success) {
         throw new Error(login.message || "Login failed");
       }
-    
-      dispatch(
-        setLogin({
-          id: login.id,
-          token: login.token,
-        })
-      )
+      await checkAuth();
       navigate("/")
-      
     } catch (error) {
       console.error("Login Error:", error.message);
       alert(error.message); 

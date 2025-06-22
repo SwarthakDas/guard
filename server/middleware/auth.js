@@ -1,15 +1,18 @@
+import { asyncHandler } from "../utils/AsyncHandler.js";
+import {ApiError} from "../utils/ApiError.js"
 import jwt from "jsonwebtoken"
+import User from "../models/User.js"
 
-export const verifyToken=async(req,res,next)=>{
-    try {
-        let token=req.header("Authorization")
-        if(!token)return res.status(403).send("Access Denied");
-        if(token.startsWith("Bearer "))token=token.slice(7,token.length).trimLeft();
+export const verifyJWT = asyncHandler(async (req, res, next) => {
+    const token = req.cookies?.accessToken
+    if (!token)throw new ApiError(401, "Unauthorized request: No token provided");
 
-        const verified=jwt.verify(token,process.env.JWT_SECRET)
-        req.user=verified
-        next()
-    } catch (error) {
-        res.status(500).json({error:error.message})
-    }
-}
+    const decodedToken= jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    if(!decodedToken)throw new ApiError(401, "Invalid or Expired Access Token");
+
+    const user=await User.findById(decodedToken?._id).select("_id username email")
+    if (!user)throw new ApiError(401, "Invalid Access Token: User not found");
+
+    req.user = user;
+    next();
+});

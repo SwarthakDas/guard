@@ -1,11 +1,9 @@
-import express from "express";
+import {Router} from "express"
 import { savePassword,getPasswords, deletePassword } from "../controllers/password.js";
-import {verifyToken} from "../middleware/auth.js"
+import {verifyJWT} from "../middleware/auth.js"
 
-const router=express.Router()
+export const router=Router()
 
-router.post("/:id/save",verifyToken,savePassword)
-router.post("/:id",verifyToken,getPasswords)
-router.post("/:id/delete",verifyToken,deletePassword)
-
-export default router
+router.post("/save",verifyJWT,savePassword)
+router.post("/get-passwords",verifyJWT,getPasswords)
+router.post("/delete",verifyJWT,deletePassword)

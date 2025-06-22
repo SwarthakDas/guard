@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Check, ChevronDown, Key, LogIn, Shield, ShieldCheck, Shuffle, Star, User, Power} from 'lucide-react'
-import { useDispatch, useSelector } from "react-redux"
-import {setLogout} from "../../state/index.js"
 import { useNavigate } from "react-router-dom"
 
 const HomePage = () => {
@@ -15,9 +13,8 @@ const HomePage = () => {
   const [isMobile, setIsMobile] = useState(false)
   const [showCopied,setShowCopied]=useState(false)
   const passRef=useRef(null)
-  const {id}=useSelector((state)=>state.auth)||""
-  const dispatch=useDispatch()
   const navigate=useNavigate()
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const clickLogin=()=>{
     navigate("/login")
@@ -54,6 +51,52 @@ const HomePage = () => {
     return () => window.removeEventListener('resize', checkIsMobile)
   }, [])
 
+  useEffect(() => {
+  const checkLogin = async () => {
+    try {
+      const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/details`,
+        {
+          method:"GET",
+          headers:{"Content-Type": "application/json"},
+          credentials: "include"
+        }
+      )
+      const result = await response.json();
+      if (result.success) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    } catch (err) {
+      console.error(err)
+      setIsLoggedIn(false);
+    }
+  };
+  checkLogin();
+}, []);
+
+const logout = async () => {
+    try {
+      const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/logout`,
+        {
+          method:"GET",
+          headers:{"Content-Type": "application/json"},
+          credentials: "include"
+        }
+      )
+      const result = await response.json();
+      if (result.success) {
+        navigate("/login")
+      } else {
+        alert("Logout failed");
+      }
+    } catch (err) {
+      console.error(err)
+      alert("Logout failed");
+    }
+  };
+
+
   const showCopiedNotification = () => {
     setShowCopied(true);
     setTimeout(() => setShowCopied(false), 2000);
@@ -70,7 +113,7 @@ const HomePage = () => {
                 }`}
               />
               <ul className="relative space-y-4 p-4">
-              {id ? (
+              {isLoggedIn ? (
                   <li>
                     <a
                       href="#"
@@ -78,7 +121,7 @@ const HomePage = () => {
                       
                     >
                       <Power className="h-6 w-6" />
-                      <span onClick={()=>dispatch(setLogout())}
+                      <span onClick={()=>{logout()}}
                         className={`ml-4 whitespace-nowrap transition-all duration-300 ${
                           isExpanded ? "opacity-100" : "opacity-0"
                         }` }
@@ -167,10 +210,10 @@ const HomePage = () => {
             </div>
           <div className="pt-16 pl-1 pr-1">
             <ul className="space-y-6">
-            {id ? (
+            {isLoggedIn ? (
               <li>
                 <a href="#" className="flex items-center text-white transition-all duration-300 hover:opacity-75"
-                onClick={()=>dispatch(setLogout())}>
+                onClick={()=>{logout()}}>
                   <Power className="h-6 w-6" />
                   <span className="ml-4 whitespace-nowrap font-medium">Logout</span>
                 </a>

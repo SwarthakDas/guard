@@ -2,14 +2,11 @@ import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import { SignupSchema } from "../../schemas/SignupSchema"
 import { Shield } from "lucide-react"
-import {useDispatch} from "react-redux"
-import {setLogin} from "../../state/index.js"
 import {useNavigate} from "react-router-dom"
 import { useState } from "react"
 
 const SignUp = () => {
 
-  const dispatch=useDispatch()
   const navigate=useNavigate()
   const [tnc,setTnc]=useState(false);
   const [checkbox,setCheckbox]=useState(false)
@@ -24,6 +21,7 @@ const SignUp = () => {
   const onSubmit=async (data)=>{
     try {
       delete data.confirmPassword
+
       const response=await fetch(`${import.meta.env.VITE_BACKEND_BASEURL}/auth/register`,
         {
           method:"POST",
@@ -32,17 +30,13 @@ const SignUp = () => {
         }
       )
       const signup=await response.json()
-      if(signup){
-        dispatch(
-          setLogin({
-            id: signup.id,
-            token: signup.token
-          })
-        )
-        navigate("/")
+      if (!signup.success) {
+        throw new Error(signup.message || "Login failed");
       }
+      navigate("/login")
     } catch (error) {
-      console.error(error)
+      console.error("Registration Error:", error.message);
+      alert(error.message); 
     }
   }
 
